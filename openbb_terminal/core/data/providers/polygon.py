@@ -73,7 +73,6 @@ class PolygonProvider(ProviderBase):
         timespan = "day"
         if weekly or monthly:
             timespan = "week" if weekly else "month"
-
         request_url = (
             f"https://api.polygon.io/v2/aggs/ticker/"
             f"{symbol.upper()}/range/1/{timespan}/"
@@ -104,7 +103,9 @@ class PolygonProvider(ProviderBase):
                 "vw": "VolWeight Avg",
             }
         )
-        df_stock_candidate["date"] = pd.to_datetime(df_stock_candidate["date"])
+        df_stock_candidate["date"] = pd.to_datetime(
+            df_stock_candidate["date"], unit="ms"
+        )
         df_stock_candidate["date"] = pd.to_datetime(df_stock_candidate["date"].dt.date)
         df_stock_candidate["Close"] = df_stock_candidate["Adj Close"]
         df_stock_candidate["Transactions"] = df_stock_candidate["Transactions"].astype(
@@ -118,7 +119,7 @@ class PolygonProvider(ProviderBase):
     def load_fundamental_data(
         self, api_key: str, symbol: str, date: str
     ) -> pd.DataFrame:
-        """ Loads fundamental data for a given symbol and date from Polygon.
+        """Loads fundamental data for a given symbol and date from Polygon.
 
         Parameters:
             api_key (str): The API key
