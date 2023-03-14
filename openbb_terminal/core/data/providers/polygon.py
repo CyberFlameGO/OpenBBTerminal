@@ -2,10 +2,36 @@ import datetime
 import requests
 import pandas as pd
 
+from openbb_terminal.core.data.providers.provider_base import ProviderBase
 
-# TODO To inherit from provider base class
-class PolygonProvider:
+
+class PolygonProvider(ProviderBase):
+    """
+    A class that provides stock and fundamental data using the Polygon API.
+
+    Parameters
+    ----------
+    api_key : str, optional
+        The API key used to authenticate requests to the Polygon API.
+
+    Methods
+    -------
+    load_stock_data(symbol, start_date, end_date, weekly, monthly)
+        Loads historical stock data for a given symbol from Polygon.
+
+    load_fundamental_data(api_key, symbol, date)
+        Loads fundamental data for a given symbol and date from Polygon.
+    """
+
     def __init__(self, api_key: str = None):
+        """
+        Initializes a new instance of the PolygonProvider class.
+
+        Parameters
+        ----------
+        api_key : str, optional
+            The API key used to authenticate requests to the Polygon API.
+        """
         self.api_key = api_key
 
         # TODO provider base class that all providers will inherit from  (API key)
@@ -18,6 +44,28 @@ class PolygonProvider:
         weekly: bool,
         monthly: bool,
     ) -> pd.DataFrame:
+        """
+        Loads historical stock data for a given symbol from Polygon.
+
+        Parameters
+        ----------
+        symbol : str
+            The stock symbol to retrieve data for.
+        start_date : str
+            The start date of the data to retrieve, in "YYYY-MM-DD" format.
+        end_date : str
+            The end date of the data to retrieve, in "YYYY-MM-DD" format.
+        weekly : bool
+            A flag indicating whether to retrieve data on a weekly basis.
+        monthly : bool
+            A flag indicating whether to retrieve data on a monthly basis.
+
+        Returns
+        -------
+        pandas.DataFrame
+            A DataFrame containing the historical stock data for the specified symbol.
+        """
+
         start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
         end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
 
@@ -70,6 +118,17 @@ class PolygonProvider:
     def load_fundamental_data(
         self, api_key: str, symbol: str, date: str
     ) -> pd.DataFrame:
+        """ Loads fundamental data for a given symbol and date from Polygon.
+
+        Parameters:
+            api_key (str): The API key
+            symbol (str): The ticker symbol of the stock to load.
+            date (str): The date of the data to load, in YYYY-MM-DD format.
+
+        Returns:
+            pd.DataFrame: A DataFrame containing the fundamental data for the specified symbol and date.
+        """
+
         self.api_key = api_key
         request_url = f"https://api.polygon.io/v3/reference/tickers/{symbol}?date={date}&apiKey={api_key}"
         r = requests.get(request_url)

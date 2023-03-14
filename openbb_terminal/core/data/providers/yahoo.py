@@ -1,11 +1,25 @@
 from datetime import datetime
+import os
 import pandas as pd
 import yfinance as yf
-import os
+
+from openbb_terminal.core.data.providers.provider_base import ProviderBase
 
 
-class YahooProvider:
+class YahooProvider(ProviderBase):
+    """
+    A provider class for loading stock data from the Yahoo Finance API.
+
+    Inherits from ProviderBase.
+    """
+
     def __init__(self, api_key: str = None):
+        """
+        Initializes a new instance of the YahooProvider class.
+
+        Parameters:
+            api_key (str): The API key to use for authentication.
+        """
         self.api_key = api_key
 
     def load_stock_data(
@@ -16,7 +30,19 @@ class YahooProvider:
         weekly: bool,
         monthly: bool,
     ) -> pd.DataFrame:
+        """
+        Loads stock data from the Yahoo Finance API.
 
+        Parameters:
+            symbol (str): The ticker symbol of the stock to load.
+            start_date (str): The start date of the data to load, in YYYY-MM-DD format.
+            end_date (str): The end date of the data to load, in YYYY-MM-DD format.
+            weekly (bool): Whether to load weekly data (True) or daily data (False).
+            monthly (bool): Whether to load monthly data (True) or daily data (False).
+
+        Returns:
+            pd.DataFrame: A DataFrame containing the loaded stock data.
+        """
         int_ = "1d"
         int_string = "Daily"
         if weekly:
@@ -70,3 +96,18 @@ class YahooProvider:
         df_stock_candidate = df_stock_candidate.rename_axis("date").reset_index()
 
         return df_stock_candidate
+
+    def load_fundamental_data(
+        self, api_key: str, symbol: str, date: str
+    ) -> pd.DataFrame:
+        """
+        Loads fundamental data from the Yahoo Finance API.
+
+        Note: This method is not implemented for this provider.
+
+        Parameters:
+            api_key (str): The API key
+            symbol (str): The ticker symbol of the stock to load.
+            date (str): The date of the data to load, in YYYY-MM-DD format.
+        """
+        raise NotImplementedError("This method is not implemented for this provider.")
